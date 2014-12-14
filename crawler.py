@@ -7,6 +7,8 @@ import hashlib
 import pprint
 from random import randint
 import time
+from config import *
+from jsengine import *
 
 def bePolite(should_i,random = 2):
     if should_i == True:
@@ -64,9 +66,14 @@ def crawler(depth):
 
             else:
                 try:
-                    webpage = urllib2.urlopen(url)
-                    content = webpage.read().decode('utf8')
+                    if JAVASCRIPT_BOOL == 0:
+                        webpage = urllib2.urlopen(url)
+                        content = webpage.read().decode('utf8')
+                    else:
+                        content = read_web(url)
                 except:
+                    import traceback
+                    exception_file.write(traceback.print_exc(file=sys.stdout))
                     exception_file.write("Exception in reading contents of file in web:",url)
                     continue
 
