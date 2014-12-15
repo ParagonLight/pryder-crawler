@@ -53,7 +53,7 @@ def crawler(depth):
                 print filename
 
             except:
-                exception_file.write("Exception in md5 for url",url)
+                exception_file.write("Exception in md5 for url:"+url)
                 continue
 
             if os.path.isfile(filename):
@@ -61,7 +61,7 @@ def crawler(depth):
                     exist_url_file.write(url+"\n")
                     content = open(filename).read().decode('utf8')
                 except:
-                    exception_file.write("Exception in opening existing file:",url,filename)
+                    exception_file.write("Exception in opening existing file:"+url+" "+filename)
                     continue
 
             else:
@@ -74,23 +74,29 @@ def crawler(depth):
                 except:
                     import traceback
                     exception_file.write(traceback.print_exc(file=sys.stdout))
-                    exception_file.write("Exception in reading contents of file in web:",url)
+                    exception_file.write("Exception in reading contents of file in web:"+url+" "+filename)
                     continue
 
                 #content = open("index.html").read().decode('utf8')
                 try:
                     filenew = open(filename,"w")
-                    filenew.write("url:"+url+"\n"+content.encode("ascii","ignore"))
+                    #print "Here",content
+                    if JAVASCRIPT_BOOL == 0:
+                        filenew.write("url:"+url+"\n"+content.encode("ascii","ignore"))
+                    else: 
+                        filenew.write("url:"+url+"\n"+content.decode('utf8').encode("ascii","ignore"))
                     filenew.close()
                 except:
-                    exception_file.write("Exception in writing a cached file:",url,filename)
+                    import traceback
+                    exception_file.write(traceback.print_exc(file=sys.stdout))
+                    exception_file.write("Exception in writing a cached file:"+url+" "+filename)
                     continue
 
             try:
                 soup = bs4.BeautifulSoup(content)
                 visited.add(url)
             except:
-                exception_file.write("Exception in beautiful soup reading content:",url,filename)
+                exception_file.write("Exception in beautiful soup reading content:"+url+" "+filename)
                 continue
 
             try:
@@ -118,7 +124,7 @@ def crawler(depth):
                 if not os.path.isfile(filename):
                     bePolite(true,3)
             except:
-                exception_file.write("Exception in finding anchor tags:",url,filename)
+                exception_file.write("Exception in finding anchor tags:"+url+" "+filename)
                 continue
         except:
             exception_file.write("GLOBAL EXCEPTION")
